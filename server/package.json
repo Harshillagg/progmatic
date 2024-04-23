@@ -5,8 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "build": "npx tsc",
+    "start": "tsc && node dist/index.js",
+    "dev": "tsc && nodemon dist/index.js",
+    "serve": "concurrently \"tsc -w \" \"nodemon dist/index.js\""
   },
   "keywords": [],
   "author": "",
@@ -17,5 +19,10 @@
     "express-validator": "^7.0.1",
     "mongoose": "^8.2.1",
     "nodemon": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.5"
   }
 }
