@@ -1,12 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, Dropdown, Navbar } from "flowbite-react";
 import { NavLink, useLocation } from "react-router-dom";
+import axios, { AxiosResponse } from "axios";
 
 export default function Header() {
   const location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [rerender, setRerender] = useState(false);
+
+  useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const codeParam = urlParams.get("code");
+
+    if (codeParam && (localStorage.getItem("accessToken") == null)) {
+      async function getAccessToken() {
+        try {
+          const response = await axios.get(`http://localhost:5000/getAccessToken?code=${codeParam}`);
+          // console.log(response.data);
+          if (response.data.access_token) {
+            localStorage.setItem("accessToken", response.data.access_token);
+            setRerender(!rerender)
+            // setIsLoggedIn(true);
+          }
+        } catch (error) {
+          console.error("Error fetching access token:", error);
+        }
+      }
+      getAccessToken();
+    }
+  }, []);
+
+
+  // async function getUserData() {
+  //   await axios.get('http://localhost:5000/getUserData', {
+  //     headers: {
+  //       "Authorization": "Bearer " + localStorage.getItem("accessToken")
+  //     }
+  //   }).then((data) => {
+  //     console.log(data);
+
+  //   })
+  // }
 
   const handleLoginWithGitHub = () => {
+    window.location.assign(`https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}`)
   };
 
   return (
@@ -15,7 +53,7 @@ export default function Header() {
         <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">&lt; progmatic / &gt;</span>
       </Navbar.Brand>
       <div className="flex md:order-2">
-        {isLoggedIn ? (
+        {localStorage.getItem("accessToken") ? (
           <Dropdown
             arrowIcon={false}
             inline
@@ -28,7 +66,7 @@ export default function Header() {
             <Dropdown.Item>Dashboard</Dropdown.Item>
             <Dropdown.Item>UI Settings</Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item>Sign out</Dropdown.Item>
+            <Dropdown.Item onClick={()=>{localStorage.removeItem("accessToken")}}>Logout</Dropdown.Item>
           </Dropdown>
         ) : (
           <button className="text-white text-base hover:underline" onClick={handleLoginWithGitHub}>Login with GitHub</button>
