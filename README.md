@@ -1,6 +1,3 @@
-Here's the markdown version of the README.md template for your project "Progmatic":
-
-```markdown
 # Progmatic
 
 ## ByteSoc's proprietary competitive programming platform
@@ -56,6 +53,3 @@ Here's the markdown version of the README.md template for your project "Progmati
    ```
 
 3. The project is now ready for development.
-```
-
-You can copy this markdown text and save it as `README.md` in the root directory of your project. Feel free to customize it further to fit your project's specific requirements.
