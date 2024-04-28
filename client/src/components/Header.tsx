@@ -25,7 +25,7 @@ export default function Header() {
       async function getAccessToken() {
         try {
           const response: AxiosResponse<any> = await axios.get(
-            `${import.meta.env.VITE_HOST}getAccessToken?code=${codeParam}`
+            `${import.meta.env.VITE_HOST}/getAccessToken?code=${codeParam}`
           );
           if (response.data.access_token) {
             localStorage.setItem("accessToken", response.data.access_token);
