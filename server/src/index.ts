@@ -20,7 +20,7 @@ app.get('/getAccessToken', async function(req, res) {
     client_id: process.env.GITHUB_CLIENT_ID,
     client_secret: process.env.GITHUB_CLIENT_SECRET,
     code: req.query.code,
-    redirect_uri: 'http://localhost:5173/'
+    redirect_uri: process.env.GITHUB_REDIRECT_URI
   };
   
   try {
