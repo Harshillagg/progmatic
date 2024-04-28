@@ -6,22 +6,21 @@ import axios, { AxiosResponse } from "axios";
 export default function Header() {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [rerender, setRerender] = useState(false);
 
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const codeParam = urlParams.get("code");
 
-    if (codeParam && (localStorage.getItem("accessToken") == null)) {
+    if (codeParam && localStorage.getItem("accessToken") == null) {
       async function getAccessToken() {
         try {
-          const response = await axios.get(`http://localhost:5000/getAccessToken?code=${codeParam}`);
-          // console.log(response.data);
+          const response: AxiosResponse<any> = await axios.get(
+            `http://localhost:5000/getAccessToken?code=${codeParam}`
+          );
           if (response.data.access_token) {
             localStorage.setItem("accessToken", response.data.access_token);
-            setRerender(!rerender)
-            // setIsLoggedIn(true);
+            setIsLoggedIn(true);
           }
         } catch (error) {
           console.error("Error fetching access token:", error);
@@ -31,20 +30,10 @@ export default function Header() {
     }
   }, []);
 
-
-  // async function getUserData() {
-  //   await axios.get('http://localhost:5000/getUserData', {
-  //     headers: {
-  //       "Authorization": "Bearer " + localStorage.getItem("accessToken")
-  //     }
-  //   }).then((data) => {
-  //     console.log(data);
-
-  //   })
-  // }
-
   const handleLoginWithGitHub = () => {
-    window.location.assign(`https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}`)
+    window.location.assign(
+      `https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}`
+    );
   };
 
   return (
@@ -53,12 +42,8 @@ export default function Header() {
         <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">&lt; progmatic / &gt;</span>
       </Navbar.Brand>
       <div className="flex md:order-2">
-        {localStorage.getItem("accessToken") ? (
-          <Dropdown
-            arrowIcon={false}
-            inline
-            label={<Avatar alt="User settings" img="/avatar.jpg" rounded />}
-          >
+        {isLoggedIn ? (
+          <Dropdown arrowIcon={false} inline label={<Avatar alt="User settings" img="/avatar.jpg" rounded />}>
             <Dropdown.Header>
               <span className="block text-sm">Ishaan Minocha</span>
               <span className="block truncate text-sm font-medium">minochaishaan2003@gmail.com</span>
@@ -66,7 +51,7 @@ export default function Header() {
             <Dropdown.Item>Dashboard</Dropdown.Item>
             <Dropdown.Item>UI Settings</Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item onClick={()=>{localStorage.removeItem("accessToken")}}>Logout</Dropdown.Item>
+            <Dropdown.Item onClick={() => {localStorage.removeItem("accessToken"); setIsLoggedIn(false);}}>Logout</Dropdown.Item>
           </Dropdown>
         ) : (
           <button className="text-white text-base hover:underline" onClick={handleLoginWithGitHub}>Login with GitHub</button>

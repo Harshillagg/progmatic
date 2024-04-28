@@ -1,6 +1,6 @@
-import bodyParser, { json } from 'body-parser'
-import express, { application, response } from 'express'
+import express from 'express'
 import cors from 'cors'
+import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import axios from 'axios'
 
@@ -12,18 +12,31 @@ app.use(cors())
 app.use(bodyParser.json())
 
 app.get('/', (req, res) => {
+  console.log('Request received at /');
   res.send('Server Running!')
 })
 
 app.get('/getAccessToken', async function(req, res) {
-  const params = `?client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}&code=${req.query.code}`;
-  await axios.post('https://github.com/login/oauth/access_token/', params, {
-    headers: {
-      "Accept": "application/json"
-    }
-  }).then((data) => {
+  console.log('Request received at /getAccessToken');
+  const requestBody = {
+    client_id: process.env.GITHUB_CLIENT_ID,
+    client_secret: process.env.GITHUB_CLIENT_SECRET,
+    code: req.query.code,
+    redirect_uri: 'http://localhost:5173/'
+  };
+  
+  try {
+    const { data } = await axios.post('https://github.com/login/oauth/access_token/', requestBody, {
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+    console.log('Access token retrieved:', data);
     res.json(data);
-  })
+  } catch (error) {
+    console.error('Failed to get access token:', error);
+    res.status(500).json({ error: 'Failed to get access token' });
+  }
 })
 
 // app.get('/getUserData', async (req, res) => {
@@ -38,6 +51,7 @@ app.get('/getAccessToken', async function(req, res) {
 //   })
 // })
 
-app.listen(process.env.PORT || 8000, () => {
-  console.log(`App listening on port http://localhost:${process.env.PORT}/`)
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`App listening on port http://localhost:${PORT}/`);
 })
