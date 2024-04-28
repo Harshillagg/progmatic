@@ -36,7 +36,6 @@ app.get('/getAccessToken', async function(req, res) {
 })
 
 app.get('/getUserData', async (req, res) => {
-  req.get("Authorization");
   await axios.get('https://api.github.com/user', {
     headers: {
       "Accept": "application/json",

@@ -7,6 +7,7 @@ interface UserData {
   avatar_url: string;
   login: string;
   email: string;
+  html_url: string;
 }
 
 
@@ -44,9 +45,13 @@ export default function Header() {
           "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
         }
       }).then((data) => {
-        // console.log(data);
-        setUserData(data);
+        setUserData(data.data);
+        console.log(data.data);
+        
       })
+    }
+    if (localStorage.getItem("accessToken")) {
+      getUserData();
     }
   }, []);
 
@@ -69,16 +74,18 @@ export default function Header() {
       </Navbar.Brand>
       <div className="flex md:order-2">
         {localStorage.getItem("accessToken") != null ? (
-          <Dropdown arrowIcon={false} inline label={<Avatar alt="User" img={userData?.avatar_url} rounded />}>
+          (<Dropdown arrowIcon={false} inline label={<Avatar alt="User" img={userData?.avatar_url} rounded />}>
             <Dropdown.Header>
-              <span className="block text-sm">Ishaan Minocha</span>
-              <span className="block truncate text-sm font-medium">minochaishaan2003@gmail.com</span>
+              <a href={userData?.html_url} target="_blank">
+              <span className="block text-md font-bold hover:underline">{userData?.login}</span>
+              </a>
+              <span className="block truncate text-sm font-medium">{userData?.email}</span>
             </Dropdown.Header>
             <Dropdown.Item>Dashboard</Dropdown.Item>
             <Dropdown.Item>UI Settings</Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-          </Dropdown>
+          </Dropdown>)
         ) : (
           <button className="text-white text-base hover:underline" onClick={handleLoginWithGitHub}>Login with GitHub</button>
         )}
