@@ -1,5 +1,3 @@
-import React from 'react'
-
 function code() {
   return (
     <div>code</div>
