@@ -43,7 +43,7 @@
 1. To run the backend server:
 
    ```sh
-   npm run server
+   npm run serve
    ```
 
 2. To run the frontend:
