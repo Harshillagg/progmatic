@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
 import { Avatar, Dropdown, Navbar } from "flowbite-react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import axios, { AxiosResponse } from "axios";
 
+interface UserData {
+  avatar_url: string;
+  login: string;
+  email: string;
+}
+
+
 export default function Header() {
+  const navigate = useNavigate();
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
     const queryString = window.location.search;
@@ -28,6 +37,17 @@ export default function Header() {
       }
       getAccessToken();
     }
+
+    async function getUserData() {
+      await axios.get("http://localhost:5000/getUserData", {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+        }
+      }).then((data) => {
+        // console.log(data);
+        setUserData(data);
+      })
+    }
   }, []);
 
   const handleLoginWithGitHub = () => {
@@ -36,14 +56,20 @@ export default function Header() {
     );
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    setIsLoggedIn(false);
+    navigate("/");
+  };
+
   return (
     <Navbar className="bg-[#181818] h-20 flex items-center justify-between">
       <Navbar.Brand href="/">
         <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">&lt; progmatic / &gt;</span>
       </Navbar.Brand>
       <div className="flex md:order-2">
-        {isLoggedIn ? (
-          <Dropdown arrowIcon={false} inline label={<Avatar alt="User settings" img="/avatar.jpg" rounded />}>
+        {localStorage.getItem("accessToken") != null ? (
+          <Dropdown arrowIcon={false} inline label={<Avatar alt="User" img={userData?.avatar_url} rounded />}>
             <Dropdown.Header>
               <span className="block text-sm">Ishaan Minocha</span>
               <span className="block truncate text-sm font-medium">minochaishaan2003@gmail.com</span>
@@ -51,7 +77,7 @@ export default function Header() {
             <Dropdown.Item>Dashboard</Dropdown.Item>
             <Dropdown.Item>UI Settings</Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item onClick={() => {localStorage.removeItem("accessToken"); setIsLoggedIn(false);}}>Logout</Dropdown.Item>
+            <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
           </Dropdown>
         ) : (
           <button className="text-white text-base hover:underline" onClick={handleLoginWithGitHub}>Login with GitHub</button>

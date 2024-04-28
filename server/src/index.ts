@@ -12,12 +12,10 @@ app.use(cors())
 app.use(bodyParser.json())
 
 app.get('/', (req, res) => {
-  console.log('Request received at /');
   res.send('Server Running!')
 })
 
 app.get('/getAccessToken', async function(req, res) {
-  console.log('Request received at /getAccessToken');
   const requestBody = {
     client_id: process.env.GITHUB_CLIENT_ID,
     client_secret: process.env.GITHUB_CLIENT_SECRET,
@@ -31,25 +29,23 @@ app.get('/getAccessToken', async function(req, res) {
         "Accept": "application/json"
       }
     });
-    console.log('Access token retrieved:', data);
     res.json(data);
   } catch (error) {
-    console.error('Failed to get access token:', error);
     res.status(500).json({ error: 'Failed to get access token' });
   }
 })
 
-// app.get('/getUserData', async (req, res) => {
-//   req.get("Authorization");
-//   await axios.get('https://api.github.com/user', {
-//     headers: {
-//       "Accept": "application/json",
-//       "Authorization": req.get("Authorization")
-//     }
-//   }).then((response) => {
-//     res.json(response.data);
-//   })
-// })
+app.get('/getUserData', async (req, res) => {
+  req.get("Authorization");
+  await axios.get('https://api.github.com/user', {
+    headers: {
+      "Accept": "application/json",
+      "Authorization": req.get("Authorization")
+    }
+  }).then((response) => {
+    res.json(response.data);
+  })
+})
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
