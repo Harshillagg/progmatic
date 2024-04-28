@@ -10,7 +10,6 @@ interface UserData {
   html_url: string;
 }
 
-
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -46,7 +45,8 @@ export default function Header() {
         }
       }).then((data) => {
         setUserData(data.data);
-        console.log(data.data);
+        // console.log(data.data);
+        setIsLoggedIn(true);
         
       })
     }
@@ -73,7 +73,7 @@ export default function Header() {
         <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">&lt; progmatic / &gt;</span>
       </Navbar.Brand>
       <div className="flex md:order-2">
-        {localStorage.getItem("accessToken") != null ? (
+        {localStorage.getItem("accessToken") != null && isLoggedIn==true ? (
           (<Dropdown arrowIcon={false} inline label={<Avatar alt="User" img={userData?.avatar_url} rounded />}>
             <Dropdown.Header>
               <a href={userData?.html_url} target="_blank">

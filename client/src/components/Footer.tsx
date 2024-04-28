@@ -1,11 +1,11 @@
 import { Footer } from "flowbite-react";
-import { NavLink } from "react-router-dom";
+// import { NavLink } from "react-router-dom";
 
 export default function Footers() {
   return (
     <Footer container className=" rounded-none bg-[#181818]">
       <div className="w-full text-center">
-        <div className="w-full justify-between sm:flex sm:items-center sm:justify-between">
+        {/* <div className="w-full justify-between sm:flex sm:items-center sm:justify-between">
           <Footer.Brand
             href="/"
             src="/logo.jpg"
@@ -18,7 +18,7 @@ export default function Footers() {
             </NavLink>
           </Footer.LinkGroup>
         </div>
-        <Footer.Divider />
+        <Footer.Divider /> */}
         <Footer.Copyright className="text-xl text-white font-semibold" href="https://github.com/IshaanMinocha/progmatic" by="bytesoc" year={2024} />
       </div>
     </Footer>
