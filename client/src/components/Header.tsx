@@ -30,6 +30,8 @@ export default function Header() {
           if (response.data.access_token) {
             localStorage.setItem("accessToken", response.data.access_token);
             setIsLoggedIn(true);
+            navigate("/");
+            window.location.reload()            
           }
         } catch (error) {
           console.error("Error fetching access token:", error);
@@ -47,7 +49,7 @@ export default function Header() {
         setUserData(data.data);
         // console.log(data.data);
         setIsLoggedIn(true);
-        
+
       })
     }
     if (localStorage.getItem("accessToken")) {
@@ -73,11 +75,11 @@ export default function Header() {
         <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">&lt; progmatic / &gt;</span>
       </Navbar.Brand>
       <div className="flex md:order-2">
-        {localStorage.getItem("accessToken") != null && isLoggedIn==true ? (
+        {localStorage.getItem("accessToken") != null && isLoggedIn == true ? (
           (<Dropdown arrowIcon={false} inline label={<Avatar alt="User" img={userData?.avatar_url} rounded />}>
             <Dropdown.Header>
               <a href={userData?.html_url} target="_blank">
-              <span className="block text-md font-bold hover:underline">{userData?.login}</span>
+                <span className="block text-md font-bold hover:underline">{userData?.login}</span>
               </a>
               <span className="block truncate text-sm font-medium">{userData?.email}</span>
             </Dropdown.Header>
@@ -87,7 +89,7 @@ export default function Header() {
             <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
           </Dropdown>)
         ) : (
-          <button className="text-white text-base hover:underline" onClick={handleLoginWithGitHub}>Login with GitHub</button>
+          <button className="text-white border-[1px] p-2 rounded-lg font-semibold border-white text-base bg-black hover:bg-white hover:text-black duration-200 ease-in-out" onClick={handleLoginWithGitHub}>Login with GitHub</button>
         )}
         <Navbar.Toggle />
       </div>
