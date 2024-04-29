@@ -4,25 +4,30 @@ import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import axios from 'axios'
 
-dotenv.config()
+dotenv.config();
 
-const app = express()
+const app = express();
 
-app.use(cors())
-app.use(bodyParser.json())
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+app.use(bodyParser.json());
+
 
 app.get('/', (req, res) => {
-  res.send('Server Running!')
+  res.send('CORS Server Running!')
 })
 
-app.get('/getAccessToken', async function(req, res) {
+app.get('/getAccessToken', async function (req, res) {
   const requestBody = {
     client_id: process.env.GITHUB_CLIENT_ID,
     client_secret: process.env.GITHUB_CLIENT_SECRET,
     code: req.query.code,
-    redirect_uri: 'http://localhost:5173/'
+    redirect_uri: process.env.GITHUB_REDIRECT_URI
   };
-  
+
   try {
     const { data } = await axios.post('https://github.com/login/oauth/access_token/', requestBody, {
       headers: {
@@ -36,7 +41,6 @@ app.get('/getAccessToken', async function(req, res) {
 })
 
 app.get('/getUserData', async (req, res) => {
-  req.get("Authorization");
   await axios.get('https://api.github.com/user', {
     headers: {
       "Accept": "application/json",
