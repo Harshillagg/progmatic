@@ -70,7 +70,7 @@ export default function Header() {
   };
 
   return (
-    <Navbar className="bg-[#181818] h-20 flex items-center justify-between">
+    <Navbar className="bg-black z-10 w-screen fixed h-20 flex items-center justify-between">
       <Navbar.Brand href="/">
         <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">&lt; progmatic / &gt;</span>
       </Navbar.Brand>
