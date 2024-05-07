@@ -7,8 +7,8 @@ interface UserData {
   avatar_url: string;
   login: string;
   email: string;
+  html_url: string;
 }
-
 
 export default function Header() {
   const navigate = useNavigate();
@@ -25,11 +25,13 @@ export default function Header() {
       async function getAccessToken() {
         try {
           const response: AxiosResponse<any> = await axios.get(
-            `http://localhost:5000/getAccessToken?code=${codeParam}`
+            `${import.meta.env.VITE_HOST}/getAccessToken?code=${codeParam}`
           );
           if (response.data.access_token) {
             localStorage.setItem("accessToken", response.data.access_token);
             setIsLoggedIn(true);
+            navigate("/");
+            window.location.reload()            
           }
         } catch (error) {
           console.error("Error fetching access token:", error);
@@ -39,14 +41,19 @@ export default function Header() {
     }
 
     async function getUserData() {
-      await axios.get("http://localhost:5000/getUserData", {
+      await axios.get(`${import.meta.env.VITE_HOST}/getUserData`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
         }
       }).then((data) => {
-        // console.log(data);
-        setUserData(data);
+        setUserData(data.data);
+        // console.log(data.data);
+        setIsLoggedIn(true);
+
       })
+    }
+    if (localStorage.getItem("accessToken")) {
+      getUserData();
     }
   }, []);
 
@@ -63,24 +70,26 @@ export default function Header() {
   };
 
   return (
-    <Navbar className="bg-[#181818] h-20 flex items-center justify-between">
+    <Navbar className="bg-black z-10 w-screen fixed h-20 flex items-center justify-between">
       <Navbar.Brand href="/">
         <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">&lt; progmatic / &gt;</span>
       </Navbar.Brand>
       <div className="flex md:order-2">
-        {localStorage.getItem("accessToken") != null ? (
-          <Dropdown arrowIcon={false} inline label={<Avatar alt="User" img={userData?.avatar_url} rounded />}>
+        {localStorage.getItem("accessToken") != null && isLoggedIn == true ? (
+          (<Dropdown arrowIcon={false} inline label={<Avatar alt="User" img={userData?.avatar_url} rounded />}>
             <Dropdown.Header>
-              <span className="block text-sm">Ishaan Minocha</span>
-              <span className="block truncate text-sm font-medium">minochaishaan2003@gmail.com</span>
+              <a href={userData?.html_url} target="_blank">
+                <span className="block text-md font-bold hover:underline">{userData?.login}</span>
+              </a>
+              <span className="block truncate text-sm font-medium">{userData?.email}</span>
             </Dropdown.Header>
             <Dropdown.Item>Dashboard</Dropdown.Item>
             <Dropdown.Item>UI Settings</Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-          </Dropdown>
+          </Dropdown>)
         ) : (
-          <button className="text-white text-base hover:underline" onClick={handleLoginWithGitHub}>Login with GitHub</button>
+          <button className="text-white border-[1px] p-2 rounded-lg font-semibold border-white text-base bg-black hover:bg-white hover:text-black duration-200 ease-in-out" onClick={handleLoginWithGitHub}>Login with GitHub</button>
         )}
         <Navbar.Toggle />
       </div>
