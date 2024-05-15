@@ -1,25 +1,62 @@
-import { useState } from 'react'
-import Editor from '@monaco-editor/react';
+import React, { useState, useCallback } from 'react';
+import CodeLeft from '../components/CodeLeft';
+import CodeRight from '../components/CodeRight';
 
-function Code() {
-  const [language, setLanguage] = useState("javascript");
+interface ResizablePanelsProps {
+  leftComponent: React.ComponentType;
+  rightComponent: React.ComponentType;
+}
+
+const ResizablePanels: React.FC<ResizablePanelsProps> = ({ leftComponent: LeftComponent, rightComponent: RightComponent }) => {
+  const [dividerPosition, setDividerPosition] = useState(55);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (isDragging) {
+      const newDividerPosition = (e.clientX / window.innerWidth) * 100;
+      if (newDividerPosition > 10 && newDividerPosition < 90) {
+        setDividerPosition(newDividerPosition);
+      }
+    }
+  }, [isDragging]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+  }, [handleMouseMove]);
+
+  const startDragging = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  }, [handleMouseMove, handleMouseUp]);
 
   return (
-    <div>
-      <select style={{backgroundColor: 'black'}} onChange={(e) => setLanguage(e.target.value)} value={language}>
-        <option value="javascript">JavaScript</option>
-        <option value="python">Python</option>
-        <option value="java">Java</option>
-        <option value="cpp">C++</option>
-      </select>
-      <Editor
-        height="90vh"
-        language={language}
-        defaultValue="//Some Code"
-        theme='vs-dark'
-      />
+    <div className="flex w-full h-full select-none">
+      <div style={{ width: `${dividerPosition}%` }} className="h-full bg-gray-200">
+        <LeftComponent />
+      </div>
+      <div
+        onMouseDown={startDragging}
+        className="flex justify-center items-center cursor-col-resize bg-gray-400 w-2 h-full"
+      >
+        <div className="w-0.5 bg-black h-6"></div>
+      </div>
+      <div style={{ width: `${100 - dividerPosition}%` }} className="h-full bg-gray-300">
+        <RightComponent />
+      </div>
     </div>
   );
-}
+};
+
+const Code: React.FC = () => {
+  return (
+    <div className="h-screen">
+      <ResizablePanels leftComponent={CodeLeft} rightComponent={CodeRight} />
+    </div>
+  );
+};
 
 export default Code;
