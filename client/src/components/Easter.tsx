@@ -18,7 +18,7 @@ const Easter: React.FC<easterProps> = () => {
 
   const CHARS = "!@#$%^&*():{};|,.<>/?";
 
-
+  
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [text, setText] = useState(TARGET_TEXT);
