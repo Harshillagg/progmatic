@@ -18,7 +18,7 @@ const languageMapping: LanguageMapping = {
 };
 
 const CodeLeft: React.FC<CodeLeftProps> = ({ onRun }) => {
-  const [language, setLanguage] = useState("java");
+  const [language, setLanguage] = useState("cpp");
   const editorRef = useRef<any>(null);
   const apikey = import.meta.env.VITE_JUDGE0_API_KEY;
 
@@ -70,16 +70,25 @@ const CodeLeft: React.FC<CodeLeftProps> = ({ onRun }) => {
     }
   };
 
+  // In future we can store the code in the format questionId_language, for now it is just stored with language as key.
+  const storeCode = () => {
+    if (editorRef.current) {
+      localStorage.setItem(language, editorRef.current.getValue());
+    }
+  }
+
   const editorComponent = useMemo(() => (
     <Editor
       height="80vh"
       language={language}
-      defaultValue="// Type some code here..."
+      value= {localStorage.getItem(language) || ""}
       theme='vs-dark'
       onMount={handleEditorDidMount}
+      onChange={storeCode}
     />
   ), [language, handleEditorDidMount]);
 
+  
   return (
     <div className="pt-20">
       <div className='flex justify-between'>
