@@ -16,7 +16,12 @@ const languageMapping: LanguageMapping = {
   "python": 71,
   "javascript": 63
 };
-
+const handleResult = (resultData: any) => {
+  if (resultData.status.id != 3) {
+    return `There is an error in code. \n${atob(resultData.compile_output)}`;
+  }
+  return resultData.stdout ? atob(resultData.stdout) : "There is no output.";
+}
 const CodeLeft: React.FC<CodeLeftProps> = ({ onRun }) => {
   const [language, setLanguage] = useState("cpp");
   const editorRef = useRef<any>(null);
@@ -41,7 +46,6 @@ const CodeLeft: React.FC<CodeLeftProps> = ({ onRun }) => {
         const { data } = await axios.post('https://judge0-ce.p.rapidapi.com/submissions', {
           source_code: btoa(sourceCode),
           language_id: languageId,
-          stdin: "",
         }, {
           headers: {
             'Content-Type': 'application/json',
@@ -54,7 +58,9 @@ const CodeLeft: React.FC<CodeLeftProps> = ({ onRun }) => {
           }
         });
 
-        const { data: resultData } = await axios.get(`https://judge0-ce.p.rapidapi.com/submissions/${data.token}`, {
+        // Check the status of the code execution every 2 seconds if the status is 2.
+
+        let { data: resultData } = await axios.get(`https://judge0-ce.p.rapidapi.com/submissions/${data.token}`, {
           headers: {
             'X-RapidAPI-Key': apikey,
             'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
@@ -62,7 +68,18 @@ const CodeLeft: React.FC<CodeLeftProps> = ({ onRun }) => {
           params: { base64_encoded: 'true' }
         });
 
-        onRun(resultData.stdout ? atob(resultData.stdout) : "There is an error in code.");
+        while(resultData.status.id === 2) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          const { data: tempData } = await axios.get(`https://judge0-ce.p.rapidapi.com/submissions/${data.token}`, {
+            headers: {
+              'X-RapidAPI-Key': apikey,
+              'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+            },
+            params: { base64_encoded: 'true' }
+          });
+          resultData = tempData;
+        }
+        onRun(handleResult(resultData));
       } catch (error) {
         console.error('Failed to execute code:', error);
         onRun("Error: Unable to execute code.");
