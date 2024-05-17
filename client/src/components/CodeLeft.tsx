@@ -1,13 +1,10 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import Editor, { loader } from '@monaco-editor/react';
 import axios from 'axios';
+import { useSharedState } from './SharedStateContext';
 
 interface LanguageMapping {
   [key: string]: number;
-}
-
-interface CodeLeftProps {
-  onRun: (output: string) => void;
 }
 
 const languageMapping: LanguageMapping = {
@@ -22,10 +19,11 @@ const handleResult = (resultData: any) => {
   }
   return resultData.stdout ? atob(resultData.stdout) : "There is no output.";
 }
-const CodeLeft: React.FC<CodeLeftProps> = ({ onRun }) => {
+const CodeLeft: React.FC = () => {
   const [language, setLanguage] = useState("cpp");
   const editorRef = useRef<any>(null);
   const apikey = import.meta.env.VITE_JUDGE0_API_KEY;
+  const {setProgramOutput, programInput} = useSharedState();
 
   const handleEditorDidMount = (editor: any) => {
     editorRef.current = editor;
@@ -42,10 +40,12 @@ const CodeLeft: React.FC<CodeLeftProps> = ({ onRun }) => {
     if (editorRef.current) {
       const sourceCode = editorRef.current.getValue();
       const languageId = languageMapping[language];
+      setProgramOutput("Submitting Code...")
       try {
         const { data } = await axios.post('https://judge0-ce.p.rapidapi.com/submissions', {
           source_code: btoa(sourceCode),
           language_id: languageId,
+          stdin: btoa(programInput.current),
         }, {
           headers: {
             'Content-Type': 'application/json',
@@ -68,6 +68,7 @@ const CodeLeft: React.FC<CodeLeftProps> = ({ onRun }) => {
           params: { base64_encoded: 'true' }
         });
 
+        setProgramOutput("Running code...");
         while(resultData.status.id === 2) {
           await new Promise(resolve => setTimeout(resolve, 2000));
           const { data: tempData } = await axios.get(`https://judge0-ce.p.rapidapi.com/submissions/${data.token}`, {
@@ -79,10 +80,10 @@ const CodeLeft: React.FC<CodeLeftProps> = ({ onRun }) => {
           });
           resultData = tempData;
         }
-        onRun(handleResult(resultData));
+        setProgramOutput(handleResult(resultData));
       } catch (error) {
         console.error('Failed to execute code:', error);
-        onRun("Error: Unable to execute code.");
+        setProgramOutput("Failed to execute code.");
       }
     }
   };
