@@ -1,22 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ResizablePanels from '../components/ResizablePanels';
 import CodeLeft from '../components/CodeLeft';
 import CodeRight from '../components/CodeRight';
+import { SharedStateProvider } from '../components/SharedStateContext';
 
 const Code: React.FC = () => {
-    const [output, setOutput] = useState("");
-
-    const handleOutput = (newOutput: string) => {
-        setOutput(newOutput);
-    };
-
     return (
+        <SharedStateProvider>
         <div className="h-screen">
             <ResizablePanels
-                leftComponent={() => <CodeLeft onRun={handleOutput} />}
-                rightComponent={() => <CodeRight output={output} />}
+                leftComponent={() => <CodeLeft />}
+                rightComponent={() => <CodeRight />}
             />
         </div>
+        </SharedStateProvider>
     );
 };
 

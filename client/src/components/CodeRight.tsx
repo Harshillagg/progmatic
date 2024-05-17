@@ -1,12 +1,11 @@
-interface CodeRightProps {
-  output: string;
-}
+import { useSharedState } from './SharedStateContext';
 
-const CodeRight: React.FC<CodeRightProps> = ({ output }) => {
+const CodeRight: React.FC = () => {
+  const { programOutput } = useSharedState();
 
   return (
       <div className="pt-20 text-black">
-          Output: <pre>{output}</pre>
+          Output: <pre>{programOutput}</pre>
       </div>
   );
 };
