@@ -1,9 +1,8 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext , useRef, useState} from 'react';
 
 type SharedStateContextType = {
-  programInput: string;
+  programInput: React.MutableRefObject<string>;
   programOutput: string;
-  setProgramInput: React.Dispatch<React.SetStateAction<string>>;
   setProgramOutput: React.Dispatch<React.SetStateAction<string>>;
 };
 
@@ -18,11 +17,11 @@ export const useSharedState = () => {
 };
 
 export const SharedStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [programInput, setProgramInput] = React.useState<string>('');
-  const [programOutput, setProgramOutput] = React.useState<string>('');
+  const programInput = useRef<string>('');
+  const [programOutput, setProgramOutput] = useState<string>('');
 
   return (
-    <SharedStateContext.Provider value={{ programInput, programOutput, setProgramInput, setProgramOutput }}>
+    <SharedStateContext.Provider value={{ programInput, programOutput, setProgramOutput }}>
       {children}
     </SharedStateContext.Provider>
   );

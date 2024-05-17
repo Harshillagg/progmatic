@@ -23,7 +23,7 @@ const CodeLeft: React.FC = () => {
   const [language, setLanguage] = useState("cpp");
   const editorRef = useRef<any>(null);
   const apikey = import.meta.env.VITE_JUDGE0_API_KEY;
-  const {setProgramOutput} = useSharedState();
+  const {setProgramOutput, programInput} = useSharedState();
 
   const handleEditorDidMount = (editor: any) => {
     editorRef.current = editor;
@@ -45,6 +45,7 @@ const CodeLeft: React.FC = () => {
         const { data } = await axios.post('https://judge0-ce.p.rapidapi.com/submissions', {
           source_code: btoa(sourceCode),
           language_id: languageId,
+          stdin: btoa(programInput.current),
         }, {
           headers: {
             'Content-Type': 'application/json',
