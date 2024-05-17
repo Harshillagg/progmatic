@@ -9,6 +9,7 @@ import Error404 from "./pages/Error404";
 import Code from "./pages/Code";
 import Footer from "./components/Footer";
 import Easter from "./components/Easter";
+import Contest from "./pages/Contest";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/code" element={<Code />} />
+          <Route path="/contest" element={<Contest />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/discussions" element={<Discussions />} />
           <Route path="/learn" element={<Learn />} />

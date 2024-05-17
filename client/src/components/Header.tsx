@@ -31,7 +31,7 @@ export default function Header() {
             localStorage.setItem("accessToken", response.data.access_token);
             setIsLoggedIn(true);
             navigate("/");
-            window.location.reload()            
+            window.location.reload()
           }
         } catch (error) {
           console.error("Error fetching access token:", error);
@@ -89,13 +89,17 @@ export default function Header() {
             <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
           </Dropdown>)
         ) : (
-          <button className="text-white border-[1px] p-2 rounded-lg font-semibold border-white text-base bg-black hover:bg-white hover:text-black duration-200 ease-in-out" onClick={handleLoginWithGitHub}>Login with GitHub</button>
+          <button className="text-white border-[1px] p-2 rounded-lg font-semibold border-white text-base bg-black hover:bg-white hover:text-black duration-200 ease-in-out" onClick={handleLoginWithGitHub}>
+            <i className="fab fa-github mx-2 text-xl"></i>
+            Login with GitHub
+          </button>
         )}
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
         <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/'} as={NavLink} to="/">Home</Navbar.Link>
-        <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/code'} as={NavLink} to="/code">Code</Navbar.Link>
+        <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/code'} as={NavLink} to="/code">Code Editor(beta)</Navbar.Link>
+        <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/contest'} as={NavLink} to="/contest">Contests</Navbar.Link>
         <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/discussions'} as={NavLink} to="/discussions">Discussions</Navbar.Link>
         <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/leaderboard'} as={NavLink} to="/leaderboard">Leaderboard</Navbar.Link>
         <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/learn'} as={NavLink} to="/learn">Learn?</Navbar.Link>

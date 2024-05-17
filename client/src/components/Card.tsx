@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 function Card() {
   return (
     <div className=" relative ">
@@ -31,22 +33,24 @@ function Card() {
           </div>
           <div className="text-center">
             <h1 className="hidden sm:block sm:text-7xl font-bold tracking-tight sm:pb-20 mb-20 text-white md:text-8xl">
-            &lt; progmatic / &gt;
+              &lt; progmatic / &gt;
             </h1>
             <h1 className="sm:hidden  font-bold tracking-tight  mb-20 text-white text-6xl ">
-            PROGMATIC
+              PROGMATIC
             </h1>
             <p className="mt-6 text-lg leading-8 text-[#ffe44d] md:mb-20 sm:text-2xl md:text-3xl">
               “Code, Compete and Conquer Your way to Coding Excellence!”
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-2">
-              <button
-                type="button"
-                className="rounded-md bg-black px-6 py-2 text-lg font-semibold text-white shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black hover:text-primary transition-all duration-200 lg:mb-12 mb-6"
-              > 
-                Get Started
-              </button>
-              
+              <Link to="/code">
+                <button
+                  type="button"
+                  className="rounded-md bg-black px-6 py-2 text-lg font-semibold text-white shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black hover:text-primary transition-all duration-200 lg:mb-12 mb-6"
+                >
+                  Get Started
+                </button>
+              </Link>
+
             </div>
           </div>
         </div>
