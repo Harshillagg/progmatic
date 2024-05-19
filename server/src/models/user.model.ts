@@ -1,8 +1,8 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import jwt from "jsonwebtoken"
+// import jwt from "jsonwebtoken"
 import {RoleDocument} from "./role.model.js"
 
-interface UserDocument extends Document {
+export interface UserDocument extends Document {
   gitHubUsername: string;
   accessToken: string;
   profilePhoto: string;
