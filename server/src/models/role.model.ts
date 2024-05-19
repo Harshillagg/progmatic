@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface RoleDocument extends Document {
+export interface RoleDocument extends Document {
   role: "participant" | "admin";
 }
 

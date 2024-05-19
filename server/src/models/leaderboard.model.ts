@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { UserDocument } from "./user.model.js";
-import { ContestDocument } from "./contest.model.js";
+import {ContestDocument} from "./contest.model.js";
 
 interface LeaderboardDocument extends Document {
   rank: number;

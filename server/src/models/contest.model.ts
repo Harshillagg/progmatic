@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface ContestDocument extends Document {
+export interface ContestDocument extends Document {
   contestId: string;
   questions: string[];
   gitHubUsername: string;
@@ -29,3 +29,4 @@ const ContestSchema: Schema<ContestDocument> = new Schema({
 
 const ContestModel = mongoose.model<ContestDocument>("Contest", ContestSchema);
 export default ContestModel;
+
