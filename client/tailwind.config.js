@@ -9,6 +9,7 @@ export default {
         primary: '#0e7490',
         light: '#F6F5F3',
         dark: '#0A0A0A',
+        gold: '#FFD700',
       }
     }
   },
