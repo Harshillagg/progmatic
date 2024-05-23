@@ -4,6 +4,8 @@ import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import axios from 'axios'
 import mongoose from 'mongoose'
+import contestRouter from './routes/contest.routes.js'
+
 
 dotenv.config();
 
@@ -20,6 +22,8 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
   res.send('CORS Server Running!')
 })
+
+app.use('/api/contests',contestRouter);
 
 app.get('/getAccessToken', async function (req, res) {
   const requestBody = {
@@ -63,5 +67,4 @@ mongoose.connect(`${process.env.MONGO_URL}`)
 })
 .catch((err)=>{
   console.log("MONGO DB connection failed!!!", err)
-
 })
