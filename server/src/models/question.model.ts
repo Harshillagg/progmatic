@@ -1,5 +1,14 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+interface TestCase {
+  input: string;
+  output: string;
+}
+
+interface Example {
+  input: string;
+  output: string;
+}
 
 interface QuestionDocument extends Document {
   questionId: string;
@@ -9,11 +18,21 @@ interface QuestionDocument extends Document {
   platformLink: string;
   solved: boolean;
   tags: string[];
-  testCases: string[];
-  answer: string;
-  example: string;
+  testCases: TestCase[];
+  answer: String;
+  example: Example;
   constraints: string;
 }
+
+const testCaseSchema = new Schema<TestCase>({
+  input: { type: String, required: true },
+  output: { type: String, required: true }
+});
+
+const exampleSchema = new Schema<Example>({
+  input: { type: String, required: true },
+  output: { type: String, required: true }
+});
 
 const QuestionSchema: Schema<QuestionDocument> = new Schema({
   questionId: { 
@@ -46,7 +65,7 @@ const QuestionSchema: Schema<QuestionDocument> = new Schema({
     default: [] 
 },
   testCases: { 
-    type: [String], 
+    type: [testCaseSchema], 
     default: [] 
 },
   answer: { 
@@ -54,7 +73,7 @@ const QuestionSchema: Schema<QuestionDocument> = new Schema({
     required: true 
 },
   example: { 
-    type: String, 
+    type: exampleSchema, 
     required: true 
 },
   constraints: { 
