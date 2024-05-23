@@ -4,6 +4,7 @@ import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import axios from 'axios'
 import mongoose from 'mongoose'
+import questionRouter from './routes/question.routes.js'
 
 dotenv.config();
 
@@ -14,12 +15,17 @@ app.use(cors({
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+
 app.use(bodyParser.json());
+app.use("/api/question", questionRouter)
 
 
 app.get('/', (req, res) => {
   res.send('CORS Server Running!')
 })
+
+
 
 app.get('/getAccessToken', async function (req, res) {
   const requestBody = {
