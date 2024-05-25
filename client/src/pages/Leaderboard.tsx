@@ -56,7 +56,7 @@ return (
         <div className="flex items-center">
             <span>#{index + 4}</span>
             <span className="ml-[20px] rounded-full w-[30px] h-[30px] flex-shrink-0">
-                <img src="../../public/logo.jpg" alt="" className="w-full h-full rounded-full" />
+                <img src="/logo.jpg" alt="" className="w-full h-full rounded-full" />
             </span>
             <span className="ml-[20px]">{player.name}</span>
         </div>
