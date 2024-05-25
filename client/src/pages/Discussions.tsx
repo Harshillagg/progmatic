@@ -1,6 +1,6 @@
 function discussions() {
   return (
-    <div>discussions</div>
+    <div className="pt-20">hello</div>
   )
 }
 

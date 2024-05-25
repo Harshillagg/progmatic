@@ -10,6 +10,7 @@ export default {
         light: '#F6F5F3',
         dark: '#0A0A0A',
         gold: '#FFD700',
+        green: '#6DC956'
       }
     }
   },
