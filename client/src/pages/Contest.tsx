@@ -1,5 +1,6 @@
 import ContestCard from "../components/ContestCard";
 import React, { useState } from "react";
+import ContestInfoModal from "../components/ContestInfoModal.tsx";
 
 type ContestTypes= {
     
@@ -8,6 +9,17 @@ type ContestTypes= {
 const Contest:React.FC<ContestTypes> = () => {
     
     const [isActiveButton, setIsActiveButton] = useState('button1');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => {
+        setIsModalOpen(true);
+        // document.body.classList.add('overflow-hidden');
+    };
+    
+    const closeModal = () => {
+        setIsModalOpen(false);
+        // document.body.classList.remove('overflow-hidden');
+    };
 
   const handleButtonClick = (button: string) => {
     setIsActiveButton(button);
@@ -21,8 +33,8 @@ const Contest:React.FC<ContestTypes> = () => {
                 <p className="mt-1 text-gray-400">Contest contest, contest Contest-Contest. So, contest.</p>
             </div>
             <div className="flex flex-wrap justify-center mt-8 gap-12">
-                <ContestCard />
-                <ContestCard />
+                <ContestCard openModal={openModal} />
+                <ContestCard openModal={openModal} />
             </div>
             <div className=" bg-[#262629] shadow-xl mt-16 rounded-xl mx-auto w-2/3 ">
                 <div className=" flex justify-center gap-6 p-4 ">
@@ -53,19 +65,21 @@ const Contest:React.FC<ContestTypes> = () => {
                 </div>
                 <div>
                     <div className={`flex flex-wrap gap-6 p-6 justify-center  ${isActiveButton === 'button1' ? 'visible' : 'hidden'}`}>
-                        <ContestCard />
-                        <ContestCard />
-                        <ContestCard />
-                        <ContestCard />
-                        <ContestCard />
-                        <ContestCard />
+                        <ContestCard openModal={openModal} />
+                        <ContestCard openModal={openModal} />
+                        <ContestCard openModal={openModal} />
+                        <ContestCard openModal={openModal} />
+                        <ContestCard openModal={openModal} />
+                        <ContestCard openModal={openModal} />
                     </div>
                     <div className={`flex flex-wrap gap-6 p-6 justify-center  ${isActiveButton === 'button2' ? 'visible' : 'hidden'}`}>
-                        <ContestCard />
-                        <ContestCard />
+                        <ContestCard openModal={openModal} />
+                        <ContestCard openModal={openModal} />
                     </div>
                 </div>
             </div>
+
+            {isModalOpen && <ContestInfoModal closeModal={closeModal} />}
         </div>
     )
     
