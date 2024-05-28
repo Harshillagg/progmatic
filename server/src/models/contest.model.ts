@@ -5,6 +5,7 @@ export interface ContestDocument extends Document {
   questions: string[];
   gitHubUsername: string;
   timeLimit: number;
+  participants: string[];
 }
 
 const ContestSchema: Schema<ContestDocument> = new Schema({
@@ -25,8 +26,11 @@ const ContestSchema: Schema<ContestDocument> = new Schema({
     type: Number,
     required: true,
   },
+  participants: {
+    type: [String],
+    default: [],
+  },
 });
 
 const ContestModel = mongoose.model<ContestDocument>("Contest", ContestSchema);
 export default ContestModel;
-
