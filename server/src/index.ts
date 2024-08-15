@@ -7,17 +7,16 @@ import mongoose from "mongoose";
 import questionRouter from "./routes/question.routes.js";
 import contestRouter from "./routes/contest.routes.js";
 import UserModel from "./models/user.model.js";
-import RoleModel from "./models/role.model.js";
-import path, {dirname} from "path";
-import { fileURLToPath } from 'url';
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+import { check } from "express-validator";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 dotenv.config({
-  path: path.resolve(__dirname, '../.env'), 
+  path: path.resolve(__dirname, "../.env"),
 });
-
 
 const app = express();
 
@@ -39,6 +38,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/getAccessToken", async function (req, res) {
+  /**
+   * request body being sent to github API
+   */
   const requestBody = {
     client_id: process.env.GITHUB_CLIENT_ID,
     client_secret: process.env.GITHUB_CLIENT_SECRET,
@@ -65,61 +67,72 @@ app.get("/getAccessToken", async function (req, res) {
       },
     });
 
-    const { login, avatar_url } = userResponse.data;
+    const userData = userResponse.data;
 
-    let user = await UserModel.findOne({ gitHubUsername: login });
+    /**
+     * userData.login contains gh username which is a unique entity
+     * and canbe used for verification
+     */
+    const checkUser = await UserModel.findOne({
+      gitHubUsername: userData.login,
+    });
 
-    if (!user) {
-      const participantRole = await RoleModel.findOne({ role: "participant" });
-
-      user = new UserModel({
-        _id: new mongoose.Types.ObjectId(),
-        gitHubUsername: login,
-        accessToken: access_token,
-        profilePhoto: avatar_url,
-        role: participantRole ? participantRole._id : null, // Assign default role
-        contests: 0,
-      });
-    } else {
-      user.accessToken = access_token;
+    //checking if user already exists, if they exist return access token immediately
+    if (checkUser) {
+      return res
+        .status(200)
+        .json({ message: "Welcome! Repeat user", access_token });
     }
+
+    const user = new UserModel({
+      gitHubUsername: userData.login,
+      accessToken: access_token,
+      profilePhoto: userData.avatar_url,
+      role: "participant", //defaulting to participant
+    });
 
     await user.save();
 
-    res.json({ message: "User authenticated and saved successfully", user });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to get access token" });
+    res.json({
+      message: "User authenticated and saved successfully",
+      user,
+      access_token, //github access token
+    });
+  } catch (error: any) {
+    console.log("Error fetching data: " + error.message);
+    res.status(500).json({ error: "Failed to get access token" + error });
   }
 });
 
 app.get("/getUserData", async (req, res) => {
-  try {
-    const token = req.get("Authorization");
+  //receiving token from client side Authorization field.
+  const token = req.get("Authorization");
 
-    const userResponse = await axios.get("https://api.github.com/user", {
+  if (!token) {
+    console.log("Token missing");
+    return res.status(401).json({ message: "Authorization token missing" });
+  }
+
+  try {
+    const response = await axios.get("https://api.github.com/user", {
       headers: {
-        Authorization: token,
+        Accept: "application/json",
+        Authorization: `token ${token}`, // Ensure token is prefixed with `token`, for github auth
       },
     });
 
-    const { login, avatar_url } = userResponse.data;
-
-    let user = await UserModel.findOne({ gitHubUsername: login });
-
-    if (user) {
-      user.profilePhoto = avatar_url;
-      await user.save();
-    } else {
-      res.status(404).json({ message: "User not found in database" });
-      return;
-    }
-
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to get user data" });
+    res.json(response.data);
+  } catch (error: any) {
+    console.error(
+      "Error fetching data:",
+      error.response?.data || error.message
+    );
+    return res
+      .status(500)
+      .json({ message: "Error fetching data: " + error.message });
   }
 });
-console.log(process.env.MONGO_URL);
+
 // DATABASE CONNECTION
 mongoose
   .connect(`${process.env.MONGO_URL}`)
@@ -127,7 +140,7 @@ mongoose
   .then(() => {
     app.listen(process.env.PORT || 8000, () => {
       console.log(
-        `App listening on port http://localhost:${process.env.PORT}/`
+        `App listening on port http://localhost:${process.env.PORT}/ -> db connected.`
       );
     });
   })
