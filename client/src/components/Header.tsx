@@ -1,3 +1,4 @@
+/* eslint-disable no-inner-declarations */
 import { useEffect, useState } from "react";
 import { Avatar, Dropdown, Navbar } from "flowbite-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -27,11 +28,12 @@ export default function Header() {
           const response: AxiosResponse<any> = await axios.get(
             `${import.meta.env.VITE_HOST}/getAccessToken?code=${codeParam}`
           );
+          console.log(response.data);
           if (response.data.access_token) {
             localStorage.setItem("accessToken", response.data.access_token);
             setIsLoggedIn(true);
             navigate("/");
-            window.location.reload()
+            window.location.reload();
           }
         } catch (error) {
           console.error("Error fetching access token:", error);
@@ -41,25 +43,28 @@ export default function Header() {
     }
 
     async function getUserData() {
-      await axios.get(`${import.meta.env.VITE_HOST}/getUserData`, {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
-        }
-      }).then((data) => {
-        setUserData(data.data);
-        // console.log(data.data);
-        setIsLoggedIn(true);
-
-      })
+      await axios
+        .get(`${import.meta.env.VITE_HOST}/getUserData`, {
+          headers: {
+            Authorization: `${localStorage.getItem("accessToken")}`,
+          },
+        })
+        .then((data) => {
+          setUserData(data.data);
+          // console.log(data.data);
+          setIsLoggedIn(true);
+        });
     }
     if (localStorage.getItem("accessToken")) {
       getUserData();
     }
-  }, []);
+  }, [navigate]);
 
   const handleLoginWithGitHub = () => {
     window.location.assign(
-      `https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}`
+      `https://github.com/login/oauth/authorize?client_id=${
+        import.meta.env.VITE_GITHUB_CLIENT_ID
+      }`
     );
   };
 
@@ -72,24 +77,37 @@ export default function Header() {
   return (
     <Navbar className="bg-black w-screen h-20 flex items-center justify-between fixed top-0 z-50">
       <Navbar.Brand href="/">
-        <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">&lt; progmatic / &gt;</span>
+        <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">
+          &lt; progmatic / &gt;
+        </span>
       </Navbar.Brand>
       <div className="flex md:order-2">
         {localStorage.getItem("accessToken") != null && isLoggedIn == true ? (
-          (<Dropdown arrowIcon={false} inline label={<Avatar alt="User" img={userData?.avatar_url} rounded />}>
+          <Dropdown
+            arrowIcon={false}
+            inline
+            label={<Avatar alt="User" img={userData?.avatar_url} rounded />}
+          >
             <Dropdown.Header>
               <a href={userData?.html_url} target="_blank">
-                <span className="block text-md font-bold hover:underline">{userData?.login}</span>
+                <span className="block text-md font-bold hover:underline">
+                  {userData?.login}
+                </span>
               </a>
-              <span className="block truncate text-sm font-medium">{userData?.email}</span>
+              <span className="block truncate text-sm font-medium">
+                {userData?.email}
+              </span>
             </Dropdown.Header>
             <Dropdown.Item>Dashboard</Dropdown.Item>
             <Dropdown.Item>UI Settings</Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-          </Dropdown>)
+          </Dropdown>
         ) : (
-          <button className="text-white border-[1px] p-2 rounded-lg font-semibold border-white text-base bg-black hover:bg-white hover:text-black duration-200 ease-in-out" onClick={handleLoginWithGitHub}>
+          <button
+            className="text-white border-[1px] p-2 rounded-lg font-semibold border-white text-base bg-black hover:bg-white hover:text-black duration-200 ease-in-out"
+            onClick={handleLoginWithGitHub}
+          >
             <i className="fab fa-github mx-2 text-xl"></i>
             Login with GitHub
           </button>
@@ -97,12 +115,54 @@ export default function Header() {
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/'} as={NavLink} to="/">Home</Navbar.Link>
-        <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/code'} as={NavLink} to="/code">Code Editor(beta)</Navbar.Link>
-        <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/contest'} as={NavLink} to="/contest">Contests</Navbar.Link>
-        <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/discussions'} as={NavLink} to="/discussions">Discussions</Navbar.Link>
-        <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/leaderboard'} as={NavLink} to="/leaderboard">Leaderboard</Navbar.Link>
-        <Navbar.Link className="text-white text-base hover:underline" active={location.pathname === '/learn'} as={NavLink} to="/learn">Learn?</Navbar.Link>
+        <Navbar.Link
+          className="text-white text-base hover:underline"
+          active={location.pathname === "/"}
+          as={NavLink}
+          to="/"
+        >
+          Home
+        </Navbar.Link>
+        <Navbar.Link
+          className="text-white text-base hover:underline"
+          active={location.pathname === "/code"}
+          as={NavLink}
+          to="/code"
+        >
+          Code Editor(beta)
+        </Navbar.Link>
+        <Navbar.Link
+          className="text-white text-base hover:underline"
+          active={location.pathname === "/contest"}
+          as={NavLink}
+          to="/contest"
+        >
+          Contests
+        </Navbar.Link>
+        <Navbar.Link
+          className="text-white text-base hover:underline"
+          active={location.pathname === "/discussions"}
+          as={NavLink}
+          to="/discussions"
+        >
+          Discussions
+        </Navbar.Link>
+        <Navbar.Link
+          className="text-white text-base hover:underline"
+          active={location.pathname === "/leaderboard"}
+          as={NavLink}
+          to="/leaderboard"
+        >
+          Leaderboard
+        </Navbar.Link>
+        <Navbar.Link
+          className="text-white text-base hover:underline"
+          active={location.pathname === "/learn"}
+          as={NavLink}
+          to="/learn"
+        >
+          Learn?
+        </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>
   );
