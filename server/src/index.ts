@@ -8,8 +8,16 @@ import questionRouter from "./routes/question.routes.js";
 import contestRouter from "./routes/contest.routes.js";
 import UserModel from "./models/user.model.js";
 import RoleModel from "./models/role.model.js";
+import path, {dirname} from "path";
+import { fileURLToPath } from 'url';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+dotenv.config({
+  path: path.resolve(__dirname, '../.env'), 
+});
+
 
 const app = express();
 
@@ -20,8 +28,9 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use("/api/question", questionRouter);
 app.use("/api/contests", contestRouter);
 
@@ -110,7 +119,7 @@ app.get("/getUserData", async (req, res) => {
     res.status(500).json({ error: "Failed to get user data" });
   }
 });
-
+console.log(process.env.MONGO_URL);
 // DATABASE CONNECTION
 mongoose
   .connect(`${process.env.MONGO_URL}`)
