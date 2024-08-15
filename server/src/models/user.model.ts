@@ -27,6 +27,7 @@ const UserSchema: Schema<UserDocument> = new Schema(
     role: {
       type: String,
       enum: ["participant", "admin"],
+      default: "participant",
     },
     contests: {
       type: Number,
